@@ -1,0 +1,156 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+class GestionTaches extends StatefulWidget {
+  final String userName;
+
+  const GestionTaches({super.key, required this.userName});
+
+  @override
+  _GestionTachesState createState() => _GestionTachesState();
+}
+
+class _GestionTachesState extends State<GestionTaches> {
+  final TextEditingController _filiereController = TextEditingController();
+  final TextEditingController _projetController = TextEditingController();
+  final TextEditingController _axeController = TextEditingController();
+
+  String? _selectedDate;
+
+  final List<String> filiereOptions = ['Agrumes', 'Céréales', 'Légumes'];
+  final Map<String, List<String>> projetFilter = {
+    'Agrumes': ['Projet A', 'Projet C'],
+    'Céréales': ['Projet B', 'Projet D'],
+    'Légumes': ['Projet E', 'Projet F'],
+  };
+  final Map<String, List<String>> axeFilter = {
+    'Agrumes': ['Axe 1', 'Axe 2'],
+    'Céréales': ['Axe 3', 'Axe 4'],
+    'Légumes': ['Axe 5', 'Axe 6'],
+  };
+
+  List<String> projetOptions = [];
+  List<String> axeOptions = [];
+
+  void _filtrerOptions(String filiere) {
+    projetOptions = projetFilter[filiere] ?? [];
+    axeOptions = axeFilter[filiere] ?? [];
+    setState(() {});
+  }
+
+  Future<void> _selectionnerDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = DateFormat('dd/MM/yyyy').format(picked);
+      });
+    }
+  }
+
+  Widget _buildDropdownWithTextField({
+    required String label,
+    required TextEditingController controller,
+    required List<String> options,
+    required void Function(String value) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: 'Saisissez ou sélectionnez...',
+            suffixIcon: PopupMenuButton<String>(
+              icon: const Icon(Icons.arrow_drop_down),
+              onSelected: (value) {
+                controller.text = value;
+                onChanged(value);
+              },
+              itemBuilder: (BuildContext context) {
+                return options.map((String option) {
+                  return PopupMenuItem<String>(
+                    value: option,
+                    child: Text(option),
+                  );
+                }).toList();
+              },
+            ),
+          ),
+          onChanged: (value) {
+            if (label == 'Filière') {
+              _filtrerOptions(value);
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Gestion des tâches'),
+        centerTitle: true,
+        backgroundColor: Colors.green,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDropdownWithTextField(
+                label: 'Filière',
+                controller: _filiereController,
+                options: filiereOptions,
+                onChanged: (value) => _filtrerOptions(value),
+              ),
+              _buildDropdownWithTextField(
+                label: 'Projet',
+                controller: _projetController,
+                options: projetOptions,
+                onChanged: (value) {},
+              ),
+              _buildDropdownWithTextField(
+                label: 'Axe',
+                controller: _axeController,
+                options: axeOptions,
+                onChanged: (value) {},
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedDate ?? 'Pas de date sélectionnée',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => _selectionnerDate(context),
+                    child: const Text('Sélectionner une date'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle form submission
+                },
+                child: const Text('Valider'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

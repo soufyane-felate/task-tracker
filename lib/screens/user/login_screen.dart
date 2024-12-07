@@ -9,7 +9,8 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   void login(BuildContext context) {
-    if (userController.text == 'user123' && passwordController.text == 'password') {
+    if (userController.text == 'user123' &&
+        passwordController.text == 'password') {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => TaskTrackerMainScreen(
@@ -30,7 +31,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), 
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         title: const Text(
           'Welcome',
@@ -72,7 +73,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 40),
-
                 TextField(
                   controller: userController,
                   decoration: InputDecoration(
@@ -86,7 +86,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-
                 TextField(
                   controller: passwordController,
                   obscureText: true,
@@ -101,7 +100,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-
                 ElevatedButton(
                   onPressed: () => login(context),
                   style: ElevatedButton.styleFrom(
@@ -120,7 +118,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-
                 TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).push(
